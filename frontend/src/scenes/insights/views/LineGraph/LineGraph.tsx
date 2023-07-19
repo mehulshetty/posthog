@@ -511,6 +511,27 @@ export function LineGraph_({
             },
         }
 
+        const verticalLabels: string[][] = []
+
+        if (!isHorizontal) {
+            verticalLabels.push(
+                ...labels.map((label) => {
+                    switch (filters?.interval) {
+                        case 'hour':
+                            return []
+                        case 'day':
+                            return []
+                        case 'week':
+                            return []
+                        case 'month':
+                            return label.split('-')
+                    }
+                    return [label]
+                })
+            )
+            console.log(verticalLabels)
+        }
+
         if (type === GraphType.Bar) {
             options.scales = {
                 x: {
