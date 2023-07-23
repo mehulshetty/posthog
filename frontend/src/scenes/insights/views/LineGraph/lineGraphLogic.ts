@@ -51,5 +51,14 @@ export const lineGraphLogic = kea<lineGraphLogicType>({
                         }))
                 },
         ],
+        createVerticalLabels: [
+            () => [],
+            () =>
+                (labels: string[]): string[][] => {
+                    return labels.map((label: string) => {
+                        return label.toString().split('-')
+                    })
+                },
+        ],
     },
 })

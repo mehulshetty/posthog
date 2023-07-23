@@ -37,7 +37,7 @@ import { SeriesLetter } from 'lib/components/SeriesGlyph'
 export interface LineGraphProps {
     datasets: GraphDataset[]
     hiddenLegendKeys?: Record<string | number, boolean | undefined>
-    labels: string[] | string[][]
+    labels: string[]
     type: GraphType
     isInProgress?: boolean
     onClick?: (payload: GraphPointPayload) => void
@@ -236,7 +236,7 @@ export function LineGraph_({
 }: LineGraphProps): JSX.Element {
     let datasets = _datasets
 
-    const { createTooltipData } = useValues(lineGraphLogic)
+    const { createTooltipData, createVerticalLabels } = useValues(lineGraphLogic)
     const { insight, timezone } = useValues(insightLogic)
     const { aggregationLabel } = useValues(groupsModel)
     const { isDarkModeOn } = useValues(themeLogic)
@@ -334,6 +334,12 @@ export function LineGraph_({
             } else {
                 datasets = datasets.filter((data) => !hiddenLegendKeys?.[data.id])
             }
+        }
+
+        const verticalLabels = !isHorizontal ? createVerticalLabels(labels) : []
+
+        if (verticalLabels) {
+            return true
         }
 
         datasets = datasets.map((dataset) => processDataset(dataset))
@@ -609,12 +615,13 @@ export function LineGraph_({
             options.indexAxis = 'y'
         }
 
+        /**
         if (!isHorizontal) {
-            labels =
+            verticalLabels =
                 labels?.map((label) => {
                     switch (filters?.interval) {
                         case 'hour':
-                            return label.toString().split('-')
+                            return label.toString().split(' ')
                         case 'day':
                             return label.toString().split('-')
                         case 'week':
@@ -625,9 +632,7 @@ export function LineGraph_({
                             return ['']
                     }
                 }) || []
-        }
-
-        console.log(datasets)
+        } */
 
         const newChart = new Chart(canvasRef.current?.getContext('2d') as ChartItem, {
             type: (isBar ? GraphType.Bar : type) as ChartType,

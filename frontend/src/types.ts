@@ -1847,7 +1847,9 @@ export interface TrendResult {
     days: string[]
     dates?: string[]
     label: string
-    labels: string[] | string[][]
+    labels: string[]
+    vertical_label: string[]
+    vertical_labels: string[][]
     breakdown_value?: string | number
     aggregated_value: number
     status?: string
@@ -2595,6 +2597,8 @@ export type GraphDataset = ChartDataset<ChartType> &
             | 'label'
             | 'days'
             | 'labels'
+            | 'vertical_label'
+            | 'vertical_labels'
             | 'data'
             | 'compare'
             | 'compare_label'
