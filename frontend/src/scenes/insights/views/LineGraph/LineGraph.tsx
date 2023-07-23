@@ -37,7 +37,7 @@ import { SeriesLetter } from 'lib/components/SeriesGlyph'
 export interface LineGraphProps {
     datasets: GraphDataset[]
     hiddenLegendKeys?: Record<string | number, boolean | undefined>
-    labels: string[]
+    labels: string[] | string[][]
     type: GraphType
     isInProgress?: boolean
     onClick?: (payload: GraphPointPayload) => void
@@ -511,27 +511,6 @@ export function LineGraph_({
             },
         }
 
-        const verticalLabels: string[][] = []
-
-        if (!isHorizontal) {
-            verticalLabels.push(
-                ...labels.map((label) => {
-                    switch (filters?.interval) {
-                        case 'hour':
-                            return []
-                        case 'day':
-                            return []
-                        case 'week':
-                            return []
-                        case 'month':
-                            return label.split('-')
-                    }
-                    return [label]
-                })
-            )
-            console.log(verticalLabels)
-        }
-
         if (type === GraphType.Bar) {
             options.scales = {
                 x: {
@@ -629,6 +608,26 @@ export function LineGraph_({
             }
             options.indexAxis = 'y'
         }
+
+        if (!isHorizontal) {
+            labels =
+                labels?.map((label) => {
+                    switch (filters?.interval) {
+                        case 'hour':
+                            return label.toString().split('-')
+                        case 'day':
+                            return label.toString().split('-')
+                        case 'week':
+                            return label.toString().split('-')
+                        case 'month':
+                            return label.toString().split('-').slice(1)
+                        default:
+                            return ['']
+                    }
+                }) || []
+        }
+
+        console.log(datasets)
 
         const newChart = new Chart(canvasRef.current?.getContext('2d') as ChartItem, {
             type: (isBar ? GraphType.Bar : type) as ChartType,

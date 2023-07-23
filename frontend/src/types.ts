@@ -1847,7 +1847,7 @@ export interface TrendResult {
     days: string[]
     dates?: string[]
     label: string
-    labels: string[]
+    labels: string[] | string[][]
     breakdown_value?: string | number
     aggregated_value: number
     status?: string
