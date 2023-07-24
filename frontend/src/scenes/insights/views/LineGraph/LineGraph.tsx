@@ -11,7 +11,7 @@ import {
     ChartType,
     Color,
     InteractionItem,
-    TickOptions,
+    CartesianTickOptions,
     TooltipModel,
     TooltipOptions,
     ScriptableLineSegmentContext,
@@ -340,11 +340,13 @@ export function LineGraph_({
 
         const seriesMax = Math.max(...datasets.flatMap((d) => d.data).filter((n) => !!n))
         const precision = seriesMax < 5 ? 1 : seriesMax < 2 ? 2 : 0
-        const tickOptions: Partial<TickOptions> = {
+        const tickOptions: Partial<CartesianTickOptions> = {
             color: colors.axisLabel as Color,
             font: {
                 size: 8,
             },
+            maxRotation: 0,
+            minRotation: 0,
         }
 
         const tooltipOptions: Partial<TooltipOptions> = {
