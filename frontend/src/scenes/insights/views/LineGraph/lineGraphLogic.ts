@@ -54,10 +54,49 @@ export const lineGraphLogic = kea<lineGraphLogicType>({
         createVerticalLabels: [
             () => [],
             () =>
-                (labels: string[]): string[][] => {
-                    return labels.map((label: string) => {
-                        return label.toString().split('-')
-                    })
+                (labels: string[], interval: string): Array<Array<string>> => {
+                    function getMonthAndDay(day: string, monthAbbr: string): string {
+                        const year = new Date().getFullYear()
+                        const month = new Date(`${monthAbbr} 1, ${year}`).getMonth() + 1
+                        return month.toString().padStart(2, '0') + '/' + day.padStart(2, '0')
+                    }
+
+                    let currentDateValue = ''
+
+                    return (
+                        labels?.map((label: string) => {
+                            const labelArray = label.toString().split('-')
+                            switch (interval) {
+                                case 'hour':
+                                    labelArray[1] = getMonthAndDay(labelArray[0], labelArray[1])
+                                    const yearAndHourArray: string[] = labelArray[2].split(' ')
+                                    labelArray[0] = yearAndHourArray[1]
+                                    labelArray[1] = labelArray[1] + '/' + yearAndHourArray[0].slice(2)
+
+                                    if (currentDateValue === labelArray[1]) {
+                                        return labelArray.slice(0, 1)
+                                    } else {
+                                        currentDateValue = labelArray[1]
+                                        return labelArray.slice(0, 2)
+                                    }
+
+                                case 'day':
+                                    labelArray[1] = getMonthAndDay(labelArray[0], labelArray[1])
+                                    if (currentDateValue === labelArray[2]) {
+                                        return labelArray.slice(1, 2)
+                                    } else {
+                                        currentDateValue = labelArray[2]
+                                        return labelArray.splice(1)
+                                    }
+                                case 'week':
+                                    return labelArray
+                                case 'month':
+                                    return labelArray.slice(1)
+                                default:
+                                    return [label]
+                            }
+                        }) || []
+                    )
                 },
         ],
     },

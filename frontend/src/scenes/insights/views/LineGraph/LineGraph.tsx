@@ -37,7 +37,7 @@ import { SeriesLetter } from 'lib/components/SeriesGlyph'
 export interface LineGraphProps {
     datasets: GraphDataset[]
     hiddenLegendKeys?: Record<string | number, boolean | undefined>
-    labels: string[]
+    labels: string[] | string[][]
     type: GraphType
     isInProgress?: boolean
     onClick?: (payload: GraphPointPayload) => void
@@ -336,18 +336,15 @@ export function LineGraph_({
             }
         }
 
-        const verticalLabels = !isHorizontal ? createVerticalLabels(labels) : []
-
-        if (verticalLabels) {
-            return true
-        }
-
         datasets = datasets.map((dataset) => processDataset(dataset))
 
         const seriesMax = Math.max(...datasets.flatMap((d) => d.data).filter((n) => !!n))
         const precision = seriesMax < 5 ? 1 : seriesMax < 2 ? 2 : 0
         const tickOptions: Partial<TickOptions> = {
             color: colors.axisLabel as Color,
+            font: {
+                size: 8,
+            },
         }
 
         const tooltipOptions: Partial<TooltipOptions> = {
@@ -615,24 +612,9 @@ export function LineGraph_({
             options.indexAxis = 'y'
         }
 
-        /**
-        if (!isHorizontal) {
-            verticalLabels =
-                labels?.map((label) => {
-                    switch (filters?.interval) {
-                        case 'hour':
-                            return label.toString().split(' ')
-                        case 'day':
-                            return label.toString().split('-')
-                        case 'week':
-                            return label.toString().split('-')
-                        case 'month':
-                            return label.toString().split('-').slice(1)
-                        default:
-                            return ['']
-                    }
-                }) || []
-        } */
+        if (labels[0].length !== undefined) {
+            labels = createVerticalLabels(labels as string[], filters?.interval ?? '')
+        }
 
         const newChart = new Chart(canvasRef.current?.getContext('2d') as ChartItem, {
             type: (isBar ? GraphType.Bar : type) as ChartType,
